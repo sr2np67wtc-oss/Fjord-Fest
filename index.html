@@ -42,7 +42,7 @@
     .nav-links a { text-decoration: none; color: rgba(255,255,255,0.7); font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: #fff; }
     .nav-cta { background: var(--primary) !important; color: #fff !important; padding: 10px 20px !important; border-radius: 4px; }
-    .nav-cta:hover { background: var(--primary-hover) !important; color: #fff !important; }
+    .nav-cta:hover { background: var(--primary-hover) !important; }
 
     /* HERO */
     #hjem { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
@@ -103,17 +103,27 @@
     .step-card h4 { font-weight: 700; margin-bottom: 8px; }
     .step-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
 
-    /* TESTIMONIALS */
+    /* PORTFOLIO */
     #anmeldelser { background: rgba(17,24,39,0.2); }
     .section-divider { width: 96px; height: 4px; background: rgba(37,99,235,0.5); border-radius: 2px; margin: 16px auto 0; }
-    .testimonials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 960px; margin: 0 auto; }
-    .testimonial-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 48px 40px; position: relative; }
-    .quote-mark { position: absolute; top: 24px; left: 24px; color: rgba(37,99,235,0.2); width: 48px; height: 48px; }
-    .testimonial-text { font-size: 1.1rem; font-style: italic; color: var(--muted); line-height: 1.7; margin-bottom: 32px; padding-top: 16px; }
-    .testimonial-author { display: flex; align-items: center; gap: 16px; }
-    .author-avatar { width: 48px; height: 48px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
-    .author-name { font-weight: 700; }
-    .author-role { font-size: 0.85rem; color: var(--primary); }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 960px; margin: 0 auto; }
+    .portfolio-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.3s, transform 0.3s; }
+    .portfolio-card:hover { border-color: rgba(37,99,235,0.4); transform: translateY(-4px); }
+    .portfolio-screenshot { position: relative; overflow: hidden; aspect-ratio: 16/9; background: #0d1117; }
+    .portfolio-screenshot img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.7s ease; display: block; }
+    .portfolio-card:hover .portfolio-screenshot img { transform: scale(1.04); }
+    .browser-bar { position: absolute; top: 0; left: 0; right: 0; height: 32px; background: rgba(10,15,26,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; padding: 0 12px; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .browser-dots { display: flex; gap: 5px; }
+    .browser-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: rgba(239,68,68,0.6); }
+    .dot-yellow { background: rgba(234,179,8,0.6); }
+    .dot-green { background: rgba(34,197,94,0.6); }
+    .browser-url { font-size: 11px; color: var(--muted); margin-left: 4px; }
+    .portfolio-info { padding: 24px 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .portfolio-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .portfolio-info p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .portfolio-link { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--primary); text-decoration: none; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+    .portfolio-link:hover { text-decoration: underline; }
 
     /* CONTACT */
     #kontakt { background: var(--bg); }
@@ -152,10 +162,9 @@
     .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
     .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .nav-links { display: none; }
-      .grid-2, .packages-grid, .steps-grid, .testimonials-grid, .contact-grid, .footer-grid { grid-template-columns: 1fr; }
+      .grid-2, .packages-grid, .steps-grid, .portfolio-grid, .contact-grid, .footer-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       .package-card.popular { transform: none; }
     }
@@ -195,7 +204,7 @@
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1 class="fade-in">Nettsider for de som tør å skille seg ut</h1>
-    <p class="fade-in delay-1">Vi bygger lynraske, rålekre nettsider, bookingsystemer og nettbutikker for småbedrifter. Solid digitalt håndverk fra Vestlandet.</p>
+    <p class="fade-in delay-1">Vi bygger lynraske, rålekre nettsider, bookingsystemer og nettbutikker for småbedrifter. Solid digitalt håndverk fra vestlandet.</p>
     <div class="hero-buttons fade-in delay-2">
       <a href="#bestill" class="btn btn-primary">Start prosjektet</a>
       <a href="#tjenester" class="btn btn-secondary">Se hva vi tilbyr</a>
@@ -248,7 +257,7 @@
   </div>
 </section>
 
-<!-- ORDER / BESTILL -->
+<!-- ORDER -->
 <section id="bestill">
   <div class="container">
     <div class="section-header">
@@ -318,39 +327,63 @@
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
+<!-- PORTFOLIO / REFERANSER -->
 <section id="anmeldelser" class="section">
   <div class="container">
     <div class="section-header">
-      <h2 class="fade-in">Fornøyde lokale kunder</h2>
+      <h2 class="fade-in">Referanseprosjekter</h2>
       <div class="section-divider"></div>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card fade-in">
-        <svg class="quote-mark" fill="currentColor" viewBox="0 0 32 32">
-          <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/>
-        </svg>
-        <p class="testimonial-text">"Nettsiden og bookingsystem. Vi fikk akkurat det vi trengte for utleievirksomheten vår, til en brøkdel av prisen andre byråer krever. Profesjonelt, raskt og dønn solid."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">S</div>
-          <div>
-            <div class="author-name">SimonsenUtleie</div>
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card fade-in">
+        <div class="portfolio-screenshot">
+          <img src="images/screenshot-simonsenutleie.png" alt="Simonsen Utleie nettside">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="browser-url">simonsenutleie.no</span>
           </div>
         </div>
-      </div>
-      <div class="testimonial-card fade-in delay-1">
-        <svg class="quote-mark" fill="currentColor" viewBox="0 0 32 32">
-          <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/>
-        </svg>
-        <p class="testimonial-text">"Fantastisk oppfølging fra dag én. Som lokalt idrettslag trengte vi en enkel portal for medlemmene, men fikk et resultat som ser ut som en million. Anbefales på det sterkeste!"</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">M</div>
+        <div class="portfolio-info">
           <div>
-            <div class="author-name">Ole.</div>
-            <div class="author-role">Styreleder, Vassøy IL · Vassøy</div>
+            <h3>Simonsen Utleie</h3>
+            <p>Utleie av festutstyr med integrert bookingsystem og tilgjengelighetskalender.</p>
           </div>
+          <a href="https://simonsenutleie.no" target="_blank" rel="noopener noreferrer" class="portfolio-link">
+            Besøk
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+          </a>
         </div>
       </div>
+
+      <div class="portfolio-card fade-in delay-1">
+        <div class="portfolio-screenshot">
+          <img src="images/screenshot-vassoy-il.png" alt="Vassøy IL nettside">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <span class="browser-url">vassøy-il.no</span>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <div>
+            <h3>Vassøy IL</h3>
+            <p>Nettsted for lokalt idrettslag med aktiviteter, lokaleleie og medlemsinfo.</p>
+          </div>
+          <a href="https://vassøy-il.no" target="_blank" rel="noopener noreferrer" class="portfolio-link">
+            Besøk
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -399,7 +432,7 @@
             2. Lag et nytt skjema og kopier Form ID (ser slik ut: xpznkgvb)
             3. Bytt ut YOUR_FORM_ID nedenfor med din ID
           -->
-          <form id="contactForm" action="https://formspree.io/f/mpqnjlyj" method="POST">
+          <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
             <div class="form-row">
               <div class="form-group">
                 <label for="name">Navn *</label>
@@ -480,25 +513,21 @@
 </footer>
 
 <script>
-  // Navbar scroll
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 20);
   });
 
-  // Fade-in on scroll
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Select package -> scroll to form
   function selectPackage(name) {
     document.getElementById('service').value = name;
     document.getElementById('kontakt').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Form via Formspree
   document.getElementById('contactForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
