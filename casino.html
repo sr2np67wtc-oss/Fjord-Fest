@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KORTSPILLET — Simonsen Fjord & Fest</title>
+  <title>CASINO — Simonsen Fjord & Fest</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
 
@@ -27,9 +27,13 @@
       position: relative;
     }
 
+    /* ═══ FLASH OVERLAY ═══════════════════════════════════════════════ */
     #flash {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 300; opacity: 0;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 300;
+      opacity: 0;
     }
     #flash.up   { background: rgba(46,168,74,0.18); }
     #flash.down { background: rgba(212,48,48,0.18); }
@@ -39,14 +43,21 @@
       100% { opacity: 0; }
     }
 
+    /* ═══ ARROW OVERLAY ═══════════════════════════════════════════════ */
     #arrow-overlay {
-      position: fixed; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none; z-index: 250; opacity: 0;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 250;
+      opacity: 0;
     }
     #arrow-overlay .arrow-glyph {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 30vmin; line-height: 1;
+      font-size: 30vmin;
+      line-height: 1;
       filter: drop-shadow(0 0 40px currentColor);
     }
     #arrow-overlay.up-anim   { animation: arrowUp   0.55s cubic-bezier(0.2,0.8,0.4,1) forwards; }
@@ -62,14 +73,23 @@
       100% { opacity: 0; transform: scale(1.4) translateY(60px); }
     }
 
+    /* ═══ INTRO ═══════════════════════════════════════════════════════ */
     #intro {
-      position: fixed; inset: 0; z-index: 200;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: #080808; overflow: hidden;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #080808;
+      overflow: hidden;
     }
+
     #intro::before {
-      content: ''; position: absolute; inset: 0;
+      content: '';
+      position: absolute;
+      inset: 0;
       background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(220,20,20,0.18) 0%, transparent 70%);
       animation: spotBreath 3s ease-in-out infinite alternate;
     }
@@ -80,12 +100,16 @@
 
     .card-ring { position: absolute; inset: 0; pointer-events: none; }
     .ring-card {
-      position: absolute; width: 54px; height: 76px;
-      border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.12);
+      position: absolute;
+      width: 54px; height: 76px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,255,255,0.12);
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
       background: rgba(20,20,20,0.9);
-      animation: orbitCard linear infinite; transform-origin: 0 0;
+      animation: orbitCard linear infinite;
+      transform-origin: 0 0;
     }
     .ring-card.red   { color: #d44; }
     .ring-card.black { color: #fff; }
@@ -101,12 +125,14 @@
     }
 
     .intro-title {
-      position: relative; z-index: 2; text-align: center;
+      position: relative; z-index: 2;
+      text-align: center;
       display: flex; flex-direction: column; align-items: center;
     }
     .intro-eyebrow {
       font-size: 0.75rem; letter-spacing: 0.35em;
-      text-transform: uppercase; color: #888; margin-bottom: 10px;
+      text-transform: uppercase; color: #888;
+      margin-bottom: 10px;
       animation: fadeSlideDown 0.8s ease 0.3s both;
     }
     @keyframes fadeSlideDown {
@@ -138,7 +164,8 @@
     .intro-divider {
       width: 80px; height: 2px;
       background: linear-gradient(90deg, transparent, var(--red), transparent);
-      margin: 18px 0; animation: dividerGrow 0.6s ease 1.4s both;
+      margin: 18px 0;
+      animation: dividerGrow 0.6s ease 1.4s both;
     }
     @keyframes dividerGrow {
       from { width: 0; opacity: 0; }
@@ -151,7 +178,8 @@
     }
     .intro-sender {
       font-size: 0.7rem; letter-spacing: 0.25em;
-      text-transform: uppercase; color: #444; margin-top: 14px;
+      text-transform: uppercase; color: #444;
+      margin-top: 14px;
       animation: fadeSlideUp 0.6s ease 1.9s both;
     }
     .intro-sender span { color: #888; }
@@ -162,10 +190,12 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.6rem; letter-spacing: 0.1em;
       background: transparent; color: #fff;
-      border: 2px solid var(--red); border-radius: 4px; cursor: pointer;
+      border: 2px solid var(--red); border-radius: 4px;
+      cursor: pointer;
       transition: box-shadow 0.2s, transform 0.15s;
       box-shadow: 0 0 20px rgba(212,32,32,0.3);
-      animation: fadeSlideUp 0.7s ease 2.1s both; overflow: hidden;
+      animation: fadeSlideUp 0.7s ease 2.1s both;
+      overflow: hidden;
     }
     #start-btn::before {
       content: ''; position: absolute; inset: 0;
@@ -192,6 +222,7 @@
       100% { opacity: 0; transform: scale(1.15); pointer-events: none; }
     }
 
+    /* ═══ GAME ════════════════════════════════════════════════════════ */
     .scanlines-game {
       position: fixed; inset: 0;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
@@ -252,8 +283,10 @@
       width: 110px; height: 160px; border-radius: 12px;
       background: #1a1a1a; border: 2px solid rgba(255,255,255,0.1);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-family: 'Bebas Neue', sans-serif; position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease; overflow: hidden;
+      font-family: 'Bebas Neue', sans-serif;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
     }
     .card.red-suit   { color: #e03030; }
     .card.black-suit { color: #fff; }
@@ -367,7 +400,7 @@
   <div class="card-ring" id="card-ring"></div>
   <div class="intro-title">
     <div class="intro-eyebrow">Simonsen Fjord &amp; Fest presenterer</div>
-    <div class="intro-main">KORTSPILLET</div>
+    <div class="intro-main">CASINO</div>
     <div class="intro-line2">Høyere eller Lavere?</div>
     <div class="intro-divider"></div>
     <div class="intro-tagline">Kan du klare det? (Nei)</div>
@@ -383,7 +416,7 @@
 
 <div class="container" id="game-container">
   <div class="show-title">
-    <h1>KORTSPILLET</h1>
+    <h1>CASINO</h1>
     <div class="subtitle">Et spill fra Simonsen Fjord &amp; Fest</div>
   </div>
 
@@ -454,7 +487,6 @@ function note(freq, type, vol, startT, dur, freqEnd) {
   osc.start(startT); osc.stop(startT + dur + 0.05);
 }
 
-// ▲ HØYERE — lys stigende casino-chime
 function soundUp() {
   const t = getCtx().currentTime;
   note(523,  'triangle', 0.30, t,       0.10);
@@ -464,7 +496,6 @@ function soundUp() {
   note(1046, 'sine',     0.08, t+0.31,  0.28);
 }
 
-// ▼ LAVERE — mørk synkende thud
 function soundDown() {
   const t = getCtx().currentTime;
   note(349, 'square',   0.20, t,       0.10);
@@ -474,7 +505,6 @@ function soundDown() {
   note(92,  'sine',     0.14, t+0.34,  0.32);
 }
 
-// ✗ GALT — sad trombone "wah wah wah WAAAAH"
 function soundLose() {
   const t = getCtx().currentTime;
   function brass(freq, startT, dur, freqEnd) {
@@ -501,7 +531,6 @@ function soundLose() {
   brass(174.6, t + 0.69, 0.75, 146);
 }
 
-// 🎉 WIN
 function soundWin() {
   const t = getCtx().currentTime;
   [523, 659, 784, 1047].forEach((f, i) =>
@@ -509,7 +538,6 @@ function soundWin() {
   );
 }
 
-// 💀 GAME OVER — tre tunge doom-akkorder
 function soundGameOver() {
   const t = getCtx().currentTime;
   function chord(freqs, startT, dur) {
@@ -523,16 +551,21 @@ function soundGameOver() {
 
 const bgMusic = document.getElementById('bg-music');
 bgMusic.volume = 0.55;
+
 let musicStarted = false;
 function startMusic() {
   if (musicStarted) return;
-  bgMusic.play().then(() => { musicStarted = true; }).catch(() => {});
+  musicStarted = true;
+  bgMusic.play().catch(() => { musicStarted = false; });
 }
-['click','touchstart','keydown'].forEach(evt =>
-  document.addEventListener(evt, () => startMusic(), { once: true, passive: true })
-);
+
 window.addEventListener('load', () => startMusic());
-function restartMusic() { bgMusic.currentTime = 0; bgMusic.play().catch(() => {}); musicStarted = true; }
+
+function restartMusic() {
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(() => {});
+  musicStarted = true;
+}
 
 const RING_CARDS = [
   {val:'K',suit:'♠',red:false},{val:'A',suit:'♥',red:true},
@@ -542,6 +575,7 @@ const RING_CARDS = [
   {val:'10',suit:'♥',red:true},{val:'5',suit:'♠',red:false},
   {val:'8',suit:'♦',red:true}, {val:'3',suit:'♣',red:false},
 ];
+
 (function buildRing() {
   const ring = document.getElementById('card-ring');
   const r = Math.min(window.innerWidth, window.innerHeight) * 0.42;
@@ -574,6 +608,7 @@ function showArrow(dir) {
   if (dir === 'up') { glyph.textContent = '▲'; glyph.style.color = '#2ea84a'; overlay.classList.add('up-anim'); }
   else              { glyph.textContent = '▼'; glyph.style.color = '#d43030'; overlay.classList.add('down-anim'); }
 }
+
 function showFlash(dir) {
   const f = document.getElementById('flash');
   f.className = ''; void f.offsetWidth; f.classList.add(dir, 'go');
