@@ -27,6 +27,7 @@
       position: relative;
     }
 
+    /* ── FLASH ── */
     #flash {
       position: fixed; inset: 0; pointer-events: none; z-index: 300; opacity: 0;
     }
@@ -35,6 +36,7 @@
     #flash.go   { animation: flashBang 0.18s ease forwards; }
     @keyframes flashBang { 0%{opacity:1} 100%{opacity:0} }
 
+    /* ── ARROW ── */
     #arrow-overlay {
       position: fixed; inset: 0; display: flex;
       align-items: center; justify-content: center;
@@ -57,6 +59,7 @@
       100%{opacity:0;transform:scale(1.4) translateY(60px)}
     }
 
+    /* ── INTRO ── */
     #intro {
       position: fixed; inset: 0; z-index: 200;
       display: flex; flex-direction: column;
@@ -158,6 +161,7 @@
       100%{opacity:0;transform:scale(1.15);pointer-events:none}
     }
 
+    /* ── GAME BACKGROUND ── */
     .scanlines-game {
       position: fixed; inset: 0;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
@@ -171,6 +175,7 @@
       pointer-events: none; z-index: 0;
     }
 
+    /* ── LAYOUT: prize panel + game ── */
     .game-layout {
       position: relative; z-index: 2;
       display: flex; align-items: flex-start; justify-content: center;
@@ -181,6 +186,7 @@
     }
     .game-layout.visible { opacity: 1; transform: translateY(0); }
 
+    /* ── PRIZE PANEL ── */
     .prize-panel {
       flex: 0 0 200px;
       display: flex; flex-direction: column; gap: 4px;
@@ -198,7 +204,7 @@
       display: flex; align-items: center; gap: 8px;
       padding: 6px 8px; border-radius: 7px;
       border: 1px solid transparent;
-      transition: all 0.4s ease;
+      transition: all 0.4s ease; cursor: default;
     }
     .prize-item .prize-emoji { font-size: 1.3rem; flex: 0 0 auto; line-height: 1; }
     .prize-item .prize-info  { min-width: 0; }
@@ -211,6 +217,7 @@
       font-size: 0.6rem; color: #444; letter-spacing: 0.04em;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    /* active = prize at stake this round */
     .prize-item.active {
       background: rgba(212,32,32,0.12);
       border-color: rgba(212,32,32,0.35);
@@ -222,12 +229,14 @@
       content: '▶'; font-size: 0.55rem; color: var(--red);
       flex: 0 0 auto; line-height: 1; margin-right: -2px;
     }
+    /* eliminated = lost this prize */
     .prize-item.eliminated {
       opacity: 0.22; filter: grayscale(1);
     }
     .prize-item.eliminated .prize-name {
       text-decoration: line-through; text-decoration-color: #e84d4d;
     }
+    /* eliminated with animation */
     .prize-item.just-eliminated {
       animation: eliminatePrize 0.6s ease forwards;
     }
@@ -237,6 +246,7 @@
       100%{ opacity: 0.22; filter: grayscale(1); }
     }
 
+    /* ── GAME CONTAINER ── */
     .container {
       flex: 1 1 auto; max-width: 520px;
       display: flex; flex-direction: column; align-items: center;
@@ -261,18 +271,28 @@
       border-radius: 12px; padding: 12px 24px;
     }
     .score-item { text-align: center; }
-    .score-item .label { font-size: 0.65rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase; }
-    .score-item .value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #fff; line-height: 1.1; }
+    .score-item .label {
+      font-size: 0.65rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .score-item .value {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #fff; line-height: 1.1;
+    }
     .score-item .value.rounds { color: #e8a020; }
 
+    /* Current prize stake — shows inside game on mobile */
     .current-stake {
       text-align: center; padding: 8px 16px;
       background: rgba(212,32,32,0.08);
       border: 1px solid rgba(212,32,32,0.2);
       border-radius: 8px; width: 100%;
     }
-    .current-stake .stake-label { font-size: 0.6rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase; }
-    .current-stake .stake-prize { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: #fff; letter-spacing: 0.06em; }
+    .current-stake .stake-label {
+      font-size: 0.6rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .current-stake .stake-prize {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+      color: #fff; letter-spacing: 0.06em;
+    }
 
     .arena { display: flex; align-items: center; gap: 24px; justify-content: center; }
     .card-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -340,7 +360,10 @@
       animation: pulse 0.8s ease infinite alternate;
     }
     @keyframes pulse { from{opacity:1} to{opacity:0.6} }
-    .streak-msg { font-size: 0.8rem; color: #555; letter-spacing: 0.08em; text-align: center; min-height: 1.2em; }
+    .streak-msg {
+      font-size: 0.8rem; color: #555; letter-spacing: 0.08em;
+      text-align: center; min-height: 1.2em;
+    }
 
     .floor-light {
       position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
@@ -357,6 +380,7 @@
       100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
     }
 
+    /* ── MOBILE ── */
     @media (max-width: 760px) {
       .prize-panel { display: none; }
       .current-stake { display: block !important; }
@@ -375,6 +399,7 @@
 <div id="flash"></div>
 <div id="arrow-overlay"><span class="arrow-glyph" id="arrow-glyph"></span></div>
 
+<!-- ═══ INTRO ════════════════════════════════════════════════════════ -->
 <div id="intro">
   <div class="scanlines"></div>
   <div class="card-ring" id="card-ring"></div>
@@ -389,17 +414,22 @@
   <button id="start-btn" onclick="startIntro()">▶ START SPILLET</button>
 </div>
 
-<!-- Music: plain <audio> — ALDRI koblet til AudioContext -->
+<!-- Music: plain <audio> element — NEVER connected to any AudioContext -->
 <audio id="bg-music" src="simonsen-fjord-og-fest.mp3" loop preload="auto"></audio>
 
 <div class="scanlines-game"></div>
 <div class="floor-light"></div>
 
+<!-- ═══ GAME ════════════════════════════════════════════════════════= -->
 <div class="game-layout" id="game-layout">
+
+  <!-- LEFT: Prize panel -->
   <div class="prize-panel" id="prize-panel">
     <div class="prize-panel-title">PREMIER</div>
+    <!-- Prizes injected by JS, house at top -->
   </div>
 
+  <!-- CENTER: Game -->
   <div class="container" id="game-container">
     <div class="show-title">
       <h1>CASINO</h1>
@@ -417,6 +447,7 @@
       </div>
     </div>
 
+    <!-- Mobile: current stake indicator -->
     <div class="current-stake" id="current-stake">
       <div class="stake-label">Premie på spill</div>
       <div class="stake-prize" id="stake-prize">🤝 Håndtrykket</div>
@@ -457,8 +488,10 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   MUSIKK — kun <audio>-element, ALDRI koblet til AudioContext.
-   SFX     — egen separat AudioContext, resume() KUN én gang i startIntro().
+   AUDIO — TWO SEPARATE SYSTEMS, NEVER MIXED:
+   1. bgMusic  = plain <audio> element. No AudioContext. No resume().
+   2. sfxCtx   = dedicated AudioContext for sound effects only.
+      sfxCtx is created ONCE on the START SPILLET gesture, never again.
 ═══════════════════════════════════════════════════════════════════ */
 const bgMusic = document.getElementById('bg-music');
 bgMusic.volume = 0.55;
@@ -475,29 +508,33 @@ function restartMusic() {
   musicStarted = true;
 }
 
-// Prøv autoplay ved sidelasting; fallback ved første berøring
+// Try autoplay on page load; also on first tap (covers autoplay-blocked browsers)
 window.addEventListener('load', () => startMusic());
 ['click','touchstart'].forEach(evt =>
   document.addEventListener(evt, startMusic, { once: true, passive: true })
 );
 
-// ── Lydeffekter: helt separat AudioContext ──
+// ── Sound effects: completely separate AudioContext ──────────────
+// sfxCtx is created ONCE inside startIntro() (the first user gesture).
+// Creating it on page-load blocks iOS audio entirely; creating it lazily
+// on every button press restarts the music. One creation on first gesture
+// is the only approach that works on iOS/Safari.
 let sfxCtx = null;
 let sfxReady = false;
 
-function getSfx() {
-  if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return sfxCtx;
-}
+function getSfx() { return sfxCtx; }
+
 function initSfx() {
+  // Called once from startIntro() — the "START SPILLET" button press.
   if (sfxReady) return;
   sfxReady = true;
-  getSfx().resume().catch(() => {});
+  sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+  sfxCtx.resume().catch(() => {});
 }
 
 function note(freq, type, vol, startT, dur, freqEnd) {
-  const ctx = getSfx();
-  const osc = ctx.createOscillator();
+  const ctx  = getSfx();
+  const osc  = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.connect(gain); gain.connect(ctx.destination);
   osc.type = type;
@@ -530,8 +567,8 @@ function soundLose() {
   const t = getSfx().currentTime;
   function brass(freq, startT, dur, freqEnd) {
     [0, 14].forEach(detune => {
-      const ctx = getSfx();
-      const osc = ctx.createOscillator();
+      const ctx  = getSfx();
+      const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
       osc.type = 'sawtooth';
@@ -557,33 +594,31 @@ function soundWin() {
 }
 function soundGameOver() {
   const t = getSfx().currentTime;
-  function chord(freqs, s, d) { freqs.forEach(f => note(f,'sawtooth',0.20,s,d)); }
+  function chord(freqs, startT, dur) { freqs.forEach(f => note(f,'sawtooth',0.20,startT,dur)); }
   chord([110,138,165], t,        0.38);
   chord([98, 123,147], t + 0.43, 0.38);
   chord([87, 110,131], t + 0.86, 0.42);
   chord([65,  82, 98], t + 1.32, 0.75);
 }
 
-/* ═══ PREMIER ═══════════════════════════════════════════════════════
-   Index 0 = huset (best), index 11 = håndtrykket (trøst)
-   Runde N → premieindeks = MAX_ROUNDS - N
+/* ═══════════════════════════════════════════════════════════════════
+   PRIZES  —  index 0 = best (house), index 11 = consolation
+   Round N → prize at index (MAX_ROUNDS - N)
 ═══════════════════════════════════════════════════════════════════ */
 const PRIZES = [
-  { emoji:'🏠', name:'Huset',       sub:'Verdi: 5 000 000 kr' },
-  { emoji:'🚗', name:'Bilen',       sub:'Tesla Model S' },
-  { emoji:'🛥️', name:'Båtturen',    sub:'Luksuskryss i Karibia' },
-  { emoji:'✈️', name:'Flyturen',    sub:'Tur/retur New York' },
-  { emoji:'📺', name:'TV-en',       sub:'85" 8K OLED' },
-  { emoji:'💻', name:'Laptopen',    sub:'MacBook Pro M3' },
-  { emoji:'📱', name:'iPhone',      sub:'16 Pro Max' },
-  { emoji:'🎸', name:'Gitaren',     sub:'Gibson Les Paul' },
-  { emoji:'🍕', name:'Middagen',    sub:'For 4 på Maaemo' },
-  { emoji:'🧢', name:'Lua',         sub:'Simonsen-merket lue' },
-  { emoji:'☕', name:'Kaffen',      sub:'Én kopp kaffe' },
-  { emoji:'🤝', name:'Håndtrykket', sub:'Trøstepremie' },
+  { emoji:'🏠', name:'Huset',         sub:'Verdi: 5 000 000 kr' },
+  { emoji:'🚗', name:'Bilen',         sub:'Tesla Model S' },
+  { emoji:'🛥️', name:'Båtturen',      sub:'Luksuskryss i Karibia' },
+  { emoji:'✈️', name:'Flyturen',      sub:'Tur/retur New York' },
+  { emoji:'📺', name:'TV-en',         sub:'85" 8K OLED' },
+  { emoji:'💻', name:'Laptopen',      sub:'MacBook Pro M3' },
+  { emoji:'📱', name:'iPhone',        sub:'16 Pro Max' },
+  { emoji:'🎸', name:'Gitaren',       sub:'Gibson Les Paul' },
+  { emoji:'🍕', name:'Middagen',      sub:'For 4 på Maaemo' },
+  { emoji:'🧢', name:'Lua',           sub:'Simonsen-merket lue' },
+  { emoji:'☕', name:'Kaffen',        sub:'Én kopp kaffe' },
+  { emoji:'🤝', name:'Håndtrykket',   sub:'Trøstepremie' },
 ];
-
-const MAX_ROUNDS = 12;
 
 function buildPrizePanel() {
   const panel = document.getElementById('prize-panel');
@@ -594,7 +629,8 @@ function buildPrizePanel() {
     const el = document.createElement('div');
     el.className = 'prize-item';
     el.id = 'prize-' + i;
-    el.innerHTML = `<span class="prize-emoji">${p.emoji}</span>
+    el.innerHTML = `
+      <span class="prize-emoji">${p.emoji}</span>
       <div class="prize-info">
         <div class="prize-name">${p.name}</div>
         <div class="prize-sub">${p.sub}</div>
@@ -603,36 +639,46 @@ function buildPrizePanel() {
   });
 }
 
-function prizeIdx(r) { return MAX_ROUNDS - r; }
+const MAX_ROUNDS = 12;
+
+function prizeIndexForRound(r) {
+  return MAX_ROUNDS - r; // round 1→11, round 12→0
+}
 
 function highlightPrize(r) {
   document.querySelectorAll('.prize-item').forEach(el => el.classList.remove('active'));
-  const i = prizeIdx(r);
-  if (i >= 0 && i < PRIZES.length) {
-    const el = document.getElementById('prize-' + i);
+  const idx = prizeIndexForRound(r);
+  if (idx >= 0 && idx < PRIZES.length) {
+    const el = document.getElementById('prize-' + idx);
     if (el) el.classList.add('active');
-    document.getElementById('stake-prize').textContent = PRIZES[i].emoji + ' ' + PRIZES[i].name;
+    document.getElementById('stake-prize').textContent =
+      PRIZES[idx].emoji + ' ' + PRIZES[idx].name;
   }
 }
 
 function eliminatePrize(r) {
-  const i = prizeIdx(r);
-  if (i < 0 || i >= PRIZES.length) return;
-  const el = document.getElementById('prize-' + i);
+  const idx = prizeIndexForRound(r);
+  if (idx < 0 || idx >= PRIZES.length) return;
+  const el = document.getElementById('prize-' + idx);
   if (!el) return;
   el.classList.remove('active');
   el.classList.add('just-eliminated');
-  setTimeout(() => { el.classList.remove('just-eliminated'); el.classList.add('eliminated'); }, 600);
+  setTimeout(() => {
+    el.classList.remove('just-eliminated');
+    el.classList.add('eliminated');
+  }, 600);
 }
 
 function resetPrizePanel() {
-  document.querySelectorAll('.prize-item').forEach(el =>
-    el.classList.remove('active','eliminated','just-eliminated')
-  );
+  document.querySelectorAll('.prize-item').forEach(el => {
+    el.classList.remove('active','eliminated','just-eliminated');
+  });
   highlightPrize(1);
 }
 
-/* ═══ KORTRING ══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   CARD RING (intro animation)
+═══════════════════════════════════════════════════════════════════ */
 const RING_CARDS = [
   {val:'K',suit:'♠',red:false},{val:'A',suit:'♥',red:true},
   {val:'7',suit:'♦',red:true}, {val:'Q',suit:'♣',red:false},
@@ -655,10 +701,13 @@ const RING_CARDS = [
   });
 })();
 
-/* ═══ INTRO → SPILL ═════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   INTRO → GAME
+═══════════════════════════════════════════════════════════════════ */
 function startIntro() {
-  startMusic();
-  initSfx(); // resume sfxCtx KUN her — ALDRI igjen
+  startMusic();   // play music if autoplay was blocked
+  initSfx();      // create sfxCtx ONCE — only here, never again
+
   document.getElementById('intro').classList.add('exit');
   setTimeout(() => {
     document.getElementById('intro').style.display = 'none';
@@ -667,32 +716,36 @@ function startIntro() {
   }, 900);
 }
 
-/* ═══ VISUELLE FX ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   VISUAL FX
+═══════════════════════════════════════════════════════════════════ */
 function showArrow(dir) {
-  const o = document.getElementById('arrow-overlay');
-  const g = document.getElementById('arrow-glyph');
-  o.className = ''; void o.offsetWidth;
-  if (dir==='up'){g.textContent='▲';g.style.color='#2ea84a';o.classList.add('up-anim');}
-  else           {g.textContent='▼';g.style.color='#d43030';o.classList.add('down-anim');}
+  const overlay = document.getElementById('arrow-overlay');
+  const glyph   = document.getElementById('arrow-glyph');
+  overlay.className = ''; void overlay.offsetWidth;
+  if (dir==='up') { glyph.textContent='▲'; glyph.style.color='#2ea84a'; overlay.classList.add('up-anim'); }
+  else            { glyph.textContent='▼'; glyph.style.color='#d43030'; overlay.classList.add('down-anim'); }
 }
 function showFlash(dir) {
   const f = document.getElementById('flash');
   f.className=''; void f.offsetWidth; f.classList.add(dir,'go');
 }
 
-/* ═══ SPILLOGIKK ════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   GAME LOGIC
+═══════════════════════════════════════════════════════════════════ */
 const VALUES    = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const NUMERIC   = {A:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12,K:13};
 const SUITS     = ['♠','♥','♦','♣'];
 const RED_SUITS = ['♥','♦'];
 
 function buildDeck() {
-  const d=[];
+  const d = [];
   for (const s of SUITS) for (const v of VALUES) d.push({val:v,suit:s,num:NUMERIC[v]});
   return d;
 }
 function shuffle(a) {
-  for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
 function pickRandom(a) { return a[Math.floor(Math.random()*a.length)]; }
@@ -702,17 +755,19 @@ let deck, currentCard, score, round, guessing;
 function startGame() {
   buildPrizePanel();
   deck=shuffle(buildDeck()); score=0; round=1; guessing=false;
-  document.getElementById('restart-btn').style.display='none';
-  document.getElementById('guess-buttons').style.display='flex';
-  document.getElementById('result-msg').textContent='';
-  document.getElementById('result-msg').className='result-msg';
-  document.getElementById('streak-msg').textContent='Gjett om neste kort er høyere eller lavere!';
-  updateScoreboard(); resetPrizePanel(); dealCurrent(); resetNextCard(); setButtonsEnabled(true);
+  document.getElementById('restart-btn').style.display = 'none';
+  document.getElementById('guess-buttons').style.display = 'flex';
+  document.getElementById('result-msg').textContent = '';
+  document.getElementById('result-msg').className = 'result-msg';
+  document.getElementById('streak-msg').textContent = 'Gjett om neste kort er høyere eller lavere!';
+  updateScoreboard();
+  resetPrizePanel();
+  dealCurrent(); resetNextCard(); setButtonsEnabled(true);
 }
 
 function updateScoreboard() {
-  document.getElementById('score').textContent=score;
-  document.getElementById('round').textContent=round+' / '+MAX_ROUNDS;
+  document.getElementById('score').textContent = score;
+  document.getElementById('round').textContent = round + ' / ' + MAX_ROUNDS;
 }
 function dealCurrent() {
   if (!deck.length) deck=shuffle(buildDeck());
@@ -720,11 +775,13 @@ function dealCurrent() {
   renderCard('current-card','cc-corner','cc-value','cc-suit','cc-corner-br',currentCard);
 }
 function resetNextCard() {
-  document.getElementById('next-card').className='card hidden';
+  const nc=document.getElementById('next-card');
+  nc.className='card hidden';
   ['nc-value','nc-suit','nc-corner','nc-corner-br'].forEach(id=>document.getElementById(id).textContent='');
 }
 function renderCard(cId,crn,val,sut,crnBr,card) {
-  document.getElementById(cId).className='card '+(RED_SUITS.includes(card.suit)?'red-suit':'black-suit');
+  const el=document.getElementById(cId);
+  el.className='card '+(RED_SUITS.includes(card.suit)?'red-suit':'black-suit');
   document.getElementById(val).textContent=card.val;
   document.getElementById(sut).textContent=card.suit;
   document.getElementById(crn).textContent=card.val+'\n'+card.suit;
@@ -762,6 +819,7 @@ function guess(dir) {
     if (won) {
       nc.classList.add('win-glow'); soundWin();
       showResult('win','🎉 RIKTIG!','Skjer det noe rart her...?');
+      eliminatePrize(round);   // cross out passed prize even on a win
       score+=100; round++; updateScoreboard();
       highlightPrize(round);
       if (round>MAX_ROUNDS) setTimeout(gameOver,1500);
@@ -774,10 +832,13 @@ function guess(dir) {
           ?`${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
           :`${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
       showResult('lose','✗ GALT!',msg);
-      eliminatePrize(round);
+      eliminatePrize(round);   // cross out the prize for this round
       round++; updateScoreboard();
       if (round>MAX_ROUNDS) setTimeout(gameOver,1100);
-      else { setTimeout(()=>{ highlightPrize(round); resetState(); },1800); return; }
+      else {
+        setTimeout(()=>{ highlightPrize(round); resetState(); }, 1800);
+        return;
+      }
     }
   },600);
 }
@@ -813,7 +874,7 @@ const LOSS_MSGS = [
 function gameOver() {
   document.getElementById('guess-buttons').style.display='none';
   soundGameOver();
-  setTimeout(()=>restartMusic(),1400);
+  setTimeout(()=>restartMusic(), 1400);
   document.getElementById('result-msg').className='result-msg gameover';
   document.getElementById('result-msg').textContent='💀 GAME OVER';
   document.getElementById('streak-msg').textContent=pickRandom(LOSS_MSGS);
