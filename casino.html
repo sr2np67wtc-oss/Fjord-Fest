@@ -426,7 +426,6 @@
   <!-- LEFT: Prize panel -->
   <div class="prize-panel" id="prize-panel">
     <div class="prize-panel-title">PREMIER</div>
-    <!-- Prizes injected by JS, house at top -->
   </div>
 
   <!-- CENTER: Game -->
@@ -450,7 +449,7 @@
     <!-- Mobile: current stake indicator -->
     <div class="current-stake" id="current-stake">
       <div class="stake-label">Premie på spill</div>
-      <div class="stake-prize" id="stake-prize">🤝 Håndtrykket</div>
+      <div class="stake-prize" id="stake-prize">🏠 Huset</div>
     </div>
 
     <div class="arena">
@@ -488,10 +487,9 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   AUDIO — TWO SEPARATE SYSTEMS, NEVER MIXED:
-   1. bgMusic  = plain <audio> element. No AudioContext. No resume().
-   2. sfxCtx   = dedicated AudioContext for sound effects only.
-      sfxCtx is created ONCE on the START SPILLET gesture, never again.
+   AUDIO — TO SEPARATE SYSTEMER:
+   1. bgMusic  = plain <audio>. Spiller på intro og game over. IKKE under spillet.
+   2. sfxCtx   = AudioContext kun for lydeffekter. Lages én gang i startIntro().
 ═══════════════════════════════════════════════════════════════════ */
 const bgMusic = document.getElementById('bg-music');
 bgMusic.volume = 0.55;
@@ -502,30 +500,31 @@ function startMusic() {
   musicStarted = true;
   bgMusic.play().catch(() => { musicStarted = false; });
 }
+function stopMusic() {
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+  musicStarted = false;
+}
 function restartMusic() {
   bgMusic.currentTime = 0;
   bgMusic.play().catch(() => {});
   musicStarted = true;
 }
 
-// Try autoplay on page load; also on first tap (covers autoplay-blocked browsers)
+// Prøv autoplay ved sidelast; også ved første tap
 window.addEventListener('load', () => startMusic());
 ['click','touchstart'].forEach(evt =>
   document.addEventListener(evt, startMusic, { once: true, passive: true })
 );
 
-// ── Sound effects: completely separate AudioContext ──────────────
-// sfxCtx is created ONCE inside startIntro() (the first user gesture).
-// Creating it on page-load blocks iOS audio entirely; creating it lazily
-// on every button press restarts the music. One creation on first gesture
-// is the only approach that works on iOS/Safari.
+// ── Lydeffekter: helt separat AudioContext ──────────────────────
+// Lages ÉN gang i startIntro() (første brukerinteraksjon).
 let sfxCtx = null;
 let sfxReady = false;
 
 function getSfx() { return sfxCtx; }
 
 function initSfx() {
-  // Called once from startIntro() — the "START SPILLET" button press.
   if (sfxReady) return;
   sfxReady = true;
   sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -602,8 +601,7 @@ function soundGameOver() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   PRIZES  —  index 0 = best (house), index 11 = consolation
-   Round N → prize at index (MAX_ROUNDS - N)
+   PREMIER  —  index 0 = huset (runde 1), index 11 = håndtrykk (runde 12)
 ═══════════════════════════════════════════════════════════════════ */
 const PRIZES = [
   { emoji:'🏠', name:'Huset',         sub:'Verdi: 5 000 000 kr' },
@@ -642,7 +640,7 @@ function buildPrizePanel() {
 const MAX_ROUNDS = 12;
 
 function prizeIndexForRound(r) {
-  return MAX_ROUNDS - r; // round 1→11, round 12→0
+  return r - 1; // runde 1→0 (hus), runde 12→11 (håndtrykk)
 }
 
 function highlightPrize(r) {
@@ -677,7 +675,7 @@ function resetPrizePanel() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   CARD RING (intro animation)
+   KORTRING (intro-animasjon)
 ═══════════════════════════════════════════════════════════════════ */
 const RING_CARDS = [
   {val:'K',suit:'♠',red:false},{val:'A',suit:'♥',red:true},
@@ -702,22 +700,23 @@ const RING_CARDS = [
 })();
 
 /* ═══════════════════════════════════════════════════════════════════
-   INTRO → GAME
+   INTRO → SPILL
 ═══════════════════════════════════════════════════════════════════ */
 function startIntro() {
-  startMusic();   // play music if autoplay was blocked
-  initSfx();      // create sfxCtx ONCE — only here, never again
+  startMusic();   // spill musikk hvis autoplay var blokkert
+  initSfx();      // lag sfxCtx ÉN gang — kun her, aldri igjen
 
   document.getElementById('intro').classList.add('exit');
   setTimeout(() => {
     document.getElementById('intro').style.display = 'none';
     document.getElementById('game-layout').classList.add('visible');
+    stopMusic();   // musikk kun på introskjerm — stopp når spillet begynner
     startGame();
   }, 900);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   VISUAL FX
+   VISUELL FX
 ═══════════════════════════════════════════════════════════════════ */
 function showArrow(dir) {
   const overlay = document.getElementById('arrow-overlay');
@@ -732,7 +731,7 @@ function showFlash(dir) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   GAME LOGIC
+   SPILLOGIKK
 ═══════════════════════════════════════════════════════════════════ */
 const VALUES    = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const NUMERIC   = {A:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12,K:13};
@@ -819,7 +818,7 @@ function guess(dir) {
     if (won) {
       nc.classList.add('win-glow'); soundWin();
       showResult('win','🎉 RIKTIG!','Skjer det noe rart her...?');
-      eliminatePrize(round);   // cross out passed prize even on a win
+      eliminatePrize(round);
       score+=100; round++; updateScoreboard();
       highlightPrize(round);
       if (round>MAX_ROUNDS) setTimeout(gameOver,1500);
@@ -832,7 +831,7 @@ function guess(dir) {
           ?`${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
           :`${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
       showResult('lose','✗ GALT!',msg);
-      eliminatePrize(round);   // cross out the prize for this round
+      eliminatePrize(round);
       round++; updateScoreboard();
       if (round>MAX_ROUNDS) setTimeout(gameOver,1100);
       else {
@@ -874,7 +873,7 @@ const LOSS_MSGS = [
 function gameOver() {
   document.getElementById('guess-buttons').style.display='none';
   soundGameOver();
-  setTimeout(()=>restartMusic(), 1400);
+  setTimeout(()=>restartMusic(), 1400);  // musikk starter igjen ved game over
   document.getElementById('result-msg').className='result-msg gameover';
   document.getElementById('result-msg').textContent='💀 GAME OVER';
   document.getElementById('streak-msg').textContent=pickRandom(LOSS_MSGS);
