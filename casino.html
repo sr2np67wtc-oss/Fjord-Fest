@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KORTSPILLET — TV Norge</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #d42020;
+      --red-glow: rgba(212,32,32,0.7);
+    }
+
+    body {
+      background: #080808;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #080808;
+      overflow: hidden;
+    }
+
+    #intro::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 50% 50%, rgba(220,20,20,0.18) 0%, transparent 70%);
+      animation: spotBreath 3s ease-in-out infinite alternate;
+    }
+    @keyframes spotBreath {
+      from { opacity: 0.6; transform: scale(1); }
+      to   { opacity: 1;   transform: scale(1.1); }
+    }
+
+    .card-ring {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .ring-card {
+      position: absolute;
+      width: 54px;
+      height: 76px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      background: rgba(20,20,20,0.9);
+      animation: orbitCard linear infinite;
+      transform-origin: 0 0;
+    }
+    .ring-card.red { color: #d44; }
+    .ring-card.black { color: #fff; }
+
+    @keyframes orbitCard {
+      from { transform: rotate(var(--start)) translateX(var(--r)) rotate(calc(-1 * var(--start))); }
+      to   { transform: rotate(calc(var(--start) + 360deg)) translateX(var(--r)) rotate(calc(-1 * (var(--start) + 360deg))); }
+    }
+
+    #intro .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 6px
+      );
+      pointer-events: none;
+    }
+
+    .intro-title {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .intro-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 10px;
+      animation: fadeSlideDown 0.8s ease 0.3s both;
+    }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro-main {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 16vw, 9rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      color: #fff;
+      text-shadow:
+        0 0 60px var(--red-glow),
+        0 0 120px rgba(212,32,32,0.3);
+      animation: titleSlam 0.6s cubic-bezier(0.23,1.4,0.4,1) 0.7s both;
+    }
+    @keyframes titleSlam {
+      from { opacity: 0; transform: scale(0.5) translateY(40px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .intro-line2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 6vw, 3.4rem);
+      letter-spacing: 0.12em;
+      color: var(--red);
+      text-shadow: 0 0 30px rgba(212,32,32,0.6);
+      animation: fadeSlideUp 0.7s ease 1.1s both;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .intro-divider {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      margin: 18px 0;
+      animation: dividerGrow 0.6s ease 1.4s both;
+    }
+    @keyframes dividerGrow {
+      from { width: 0; opacity: 0; }
+      to   { width: 80px; opacity: 1; }
+    }
+
+    .intro-tagline {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #666;
+      animation: fadeSlideUp 0.6s ease 1.6s both;
+    }
+
+    #start-btn {
+      position: relative;
+      z-index: 2;
+      margin-top: 48px;
+      padding: 20px 60px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      background: transparent;
+      color: #fff;
+      border: 2px solid var(--red);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 0 20px rgba(212,32,32,0.3), inset 0 0 0 0 var(--red);
+      animation: fadeSlideUp 0.7s ease 2s both;
+    }
+    #start-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+      z-index: -1;
+    }
+    #start-btn:hover::before { transform: scaleX(1); }
+    #start-btn:hover {
+      box-shadow: 0 0 50px rgba(212,32,32,0.7);
+      transform: translateY(-2px);
+    }
+    #start-btn:active { transform: translateY(0); }
+
+    #start-btn::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border: 1px solid rgba(212,32,32,0.4);
+      border-radius: 6px;
+      animation: btnPulse 2s ease-in-out 2.5s infinite;
+    }
+    @keyframes btnPulse {
+      0%,100% { opacity: 0.4; transform: scale(1); }
+      50%      { opacity: 0;   transform: scale(1.06); }
+    }
+
+    #intro.exit {
+      animation: introExit 0.9s cubic-bezier(0.7,0,1,1) forwards;
+    }
+    @keyframes introExit {
+      0%   { opacity: 1; transform: scale(1); }
+      40%  { opacity: 1; transform: scale(1.04); }
+      100% { opacity: 0; transform: scale(1.15); pointer-events: none; }
+    }
+
+    .scanlines-game {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(180,0,0,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(180,0,0,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      padding: 20px;
+      width: 100%;
+      max-width: 520px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .show-title { text-align: center; }
+    .show-title h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 9vw, 4.5rem);
+      letter-spacing: 0.08em;
+      color: #fff;
+      text-shadow: 0 0 40px rgba(220,30,30,0.8), 0 0 80px rgba(220,30,30,0.3);
+      line-height: 1;
+    }
+    .show-title .subtitle {
+      font-size: 0.8rem;
+      color: #666;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 32px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 28px;
+    }
+    .score-item { text-align: center; }
+    .score-item .label {
+      font-size: 0.65rem;
+      color: #666;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .score-item .value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .score-item .value.rounds { color: #e8a020; }
+
+    .arena {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      justify-content: center;
+    }
+    .card-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+    }
+
+    .card {
+      width: 110px;
+      height: 160px;
+      border-radius: 12px;
+      background: #1a1a1a;
+      border: 2px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .card.red-suit { color: #e03030; }
+    .card.black-suit { color: #fff; }
+    .card-value { font-size: 3rem; line-height: 1; }
+    .card-suit  { font-size: 2rem; line-height: 1; }
+    .card-corner {
+      position: absolute; top: 8px; left: 10px;
+      font-size: 1.1rem; line-height: 1;
+    }
+    .card-corner-br {
+      position: absolute; bottom: 8px; right: 10px;
+      font-size: 1.1rem; line-height: 1;
+      transform: rotate(180deg);
+    }
+
+    .card.hidden {
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #1a1a2e);
+      border-color: rgba(100,100,200,0.3);
+    }
+    .card.hidden .card-value,
+    .card.hidden .card-suit,
+    .card.hidden .card-corner,
+    .card.hidden .card-corner-br { color: transparent; }
+    .card.hidden::after {
+      content: '?';
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem;
+      color: rgba(100,100,200,0.4);
+      position: absolute;
+    }
+
+    .card.flip-reveal { animation: flipReveal 0.5s ease forwards; }
+    @keyframes flipReveal {
+      0%   { transform: scaleX(1); }
+      50%  { transform: scaleX(0); }
+      100% { transform: scaleX(1); }
+    }
+    .card.win-glow  { box-shadow: 0 0 30px rgba(50,200,50,0.6);  border-color: rgba(50,200,50,0.6); }
+    .card.lose-glow { box-shadow: 0 0 30px rgba(220,30,30,0.6);  border-color: rgba(220,30,30,0.6); }
+
+    .vs-arrow {
+      font-size: 2rem; color: #333;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .guess-buttons { display: flex; gap: 16px; }
+
+    .btn {
+      padding: 16px 40px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
+      border: none; border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+    .btn:not(:disabled):hover  { transform: translateY(-2px); }
+    .btn:not(:disabled):active { transform: translateY(0); }
+
+    .btn-up {
+      background: linear-gradient(135deg, #1e6b2e, #2ea84a);
+      color: #fff; box-shadow: 0 4px 20px rgba(46,168,74,0.3);
+    }
+    .btn-up:not(:disabled):hover { box-shadow: 0 8px 30px rgba(46,168,74,0.5); }
+
+    .btn-down {
+      background: linear-gradient(135deg, #8b1c1c, #d43030);
+      color: #fff; box-shadow: 0 4px 20px rgba(212,48,48,0.3);
+    }
+    .btn-down:not(:disabled):hover { box-shadow: 0 8px 30px rgba(212,48,48,0.5); }
+
+    .btn-restart {
+      background: linear-gradient(135deg, #222, #444);
+      color: #fff; padding: 14px 36px; font-size: 1.2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none;
+    }
+
+    .result-msg {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; letter-spacing: 0.06em;
+      min-height: 2.6rem; text-align: center;
+    }
+    .result-msg.win  { color: #4de87a; text-shadow: 0 0 20px rgba(77,232,122,0.5); }
+    .result-msg.lose { color: #e84d4d; text-shadow: 0 0 20px rgba(232,77,77,0.5); }
+    .result-msg.gameover {
+      color: #e84d4d; font-size: 3rem;
+      text-shadow: 0 0 40px rgba(232,77,77,0.8);
+      animation: pulse 0.8s ease infinite alternate;
+    }
+    @keyframes pulse { from { opacity: 1; } to { opacity: 0.6; } }
+
+    .streak-msg {
+      font-size: 0.8rem; color: #555;
+      letter-spacing: 0.08em; text-align: center;
+      min-height: 1.2em;
+    }
+
+    .floor-light {
+      position: fixed; bottom: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 160px;
+      background: radial-gradient(ellipse at center top, rgba(180,0,0,0.2) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .burst {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; z-index: 100;
+      animation: burstAnim 0.8s ease forwards;
+    }
+    @keyframes burstAnim {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .card { width: 88px; height: 130px; }
+      .card-value { font-size: 2.4rem; }
+      .card-suit  { font-size: 1.6rem; }
+      .btn { padding: 14px 28px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="intro">
+  <div class="scanlines"></div>
+  <div class="card-ring" id="card-ring"></div>
+
+  <div class="intro-title">
+    <div class="intro-eyebrow">TV Norge presenterer</div>
+    <div class="intro-main">KORTSPILLET</div>
+    <div class="intro-line2">Høyere eller Lavere?</div>
+    <div class="intro-divider"></div>
+    <div class="intro-tagline">Kan du klare det? (Nei)</div>
+  </div>
+
+  <button id="start-btn" onclick="startIntro()">▶ START SPILLET</button>
+</div>
+
+<audio id="intro-audio" src="intro.mp3" preload="auto"></audio>
+
+<div class="scanlines-game"></div>
+<div class="floor-light"></div>
+
+<div class="container" id="game-container">
+  <div class="show-title">
+    <h1>KORTSPILLET</h1>
+    <div class="subtitle">TV Norge — Høyere eller Lavere?</div>
+  </div>
+
+  <div class="scoreboard">
+    <div class="score-item">
+      <div class="label">Poeng</div>
+      <div class="value" id="score">0</div>
+    </div>
+    <div class="score-item">
+      <div class="label">Runde</div>
+      <div class="value rounds" id="round">1 / 12</div>
+    </div>
+  </div>
+
+  <div class="arena">
+    <div class="card-slot">
+      <div class="card-label">Ditt kort</div>
+      <div class="card" id="current-card">
+        <span class="card-corner" id="cc-corner"></span>
+        <span class="card-value" id="cc-value"></span>
+        <span class="card-suit" id="cc-suit"></span>
+        <span class="card-corner-br" id="cc-corner-br"></span>
+      </div>
+    </div>
+    <div class="vs-arrow">VS</div>
+    <div class="card-slot">
+      <div class="card-label">Neste kort</div>
+      <div class="card hidden" id="next-card">
+        <span class="card-corner" id="nc-corner"></span>
+        <span class="card-value" id="nc-value"></span>
+        <span class="card-suit" id="nc-suit"></span>
+        <span class="card-corner-br" id="nc-corner-br"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-msg" id="result-msg"></div>
+  <div class="streak-msg" id="streak-msg">Gjett om neste kort er høyere eller lavere!</div>
+
+  <div class="guess-buttons" id="guess-buttons">
+    <button class="btn btn-up"   onclick="guess('up')">▲ HØYERE</button>
+    <button class="btn btn-down" onclick="guess('down')">▼ LAVERE</button>
+  </div>
+
+  <button class="btn btn-restart" id="restart-btn" onclick="startGame()">▶ SPILL IGJEN</button>
+</div>
+
+<script>
+  const RING_CARDS = [
+    { val:'K', suit:'♠', red:false },
+    { val:'A', suit:'♥', red:true  },
+    { val:'7', suit:'♦', red:true  },
+    { val:'Q', suit:'♣', red:false },
+    { val:'J', suit:'♥', red:true  },
+    { val:'2', suit:'♠', red:false },
+    { val:'9', suit:'♦', red:true  },
+    { val:'4', suit:'♣', red:false },
+    { val:'10',suit:'♥', red:true  },
+    { val:'5', suit:'♠', red:false },
+    { val:'8', suit:'♦', red:true  },
+    { val:'3', suit:'♣', red:false },
+  ];
+
+  (function buildRing() {
+    const ring = document.getElementById('card-ring');
+    const cx = '50vw', cy = '50vh';
+    const r = Math.min(window.innerWidth, window.innerHeight) * 0.42;
+    RING_CARDS.forEach((c, i) => {
+      const el = document.createElement('div');
+      el.className = 'ring-card ' + (c.red ? 'red' : 'black');
+      el.textContent = c.val + c.suit;
+      const angle = (i / RING_CARDS.length) * 360;
+      const duration = 28 + (i % 3) * 4;
+      el.style.cssText = `
+        left: ${cx}; top: ${cy};
+        --start: ${angle}deg;
+        --r: ${r}px;
+        animation-duration: ${duration}s;
+        animation-delay: -${(i / RING_CARDS.length) * duration}s;
+        opacity: ${0.25 + (i % 4) * 0.07};
+      `;
+      ring.appendChild(el);
+    });
+  })();
+
+  function startIntro() {
+    const audio = document.getElementById('intro-audio');
+    audio.play().catch(() => {});
+    const intro = document.getElementById('intro');
+    intro.classList.add('exit');
+    setTimeout(() => {
+      intro.style.display = 'none';
+      document.getElementById('game-container').classList.add('visible');
+      startGame();
+    }, 900);
+  }
+
+  const VALUES  = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const NUMERIC = {A:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12,K:13};
+  const SUITS   = ['♠','♥','♦','♣'];
+  const RED_SUITS = ['♥','♦'];
+
+  function buildDeck() {
+    const d = [];
+    for (const s of SUITS)
+      for (const v of VALUES)
+        d.push({ val:v, suit:s, num:NUMERIC[v] });
+    return d;
+  }
+  function shuffle(a) {
+    for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  }
+  function pickRandom(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+  const MAX_ROUNDS = 12;
+  let deck, currentCard, score, round, guessing;
+
+  function startGame() {
+    deck = shuffle(buildDeck());
+    score = 0; round = 1; guessing = false;
+    document.getElementById('restart-btn').style.display = 'none';
+    document.getElementById('guess-buttons').style.display = 'flex';
+    document.getElementById('result-msg').textContent = '';
+    document.getElementById('result-msg').className = 'result-msg';
+    document.getElementById('streak-msg').textContent = 'Gjett om neste kort er høyere eller lavere!';
+    updateScoreboard();
+    dealCurrent();
+    resetNextCard();
+    setButtonsEnabled(true);
+  }
+
+  function updateScoreboard() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('round').textContent = round + ' / ' + MAX_ROUNDS;
+  }
+
+  function dealCurrent() {
+    if (!deck.length) deck = shuffle(buildDeck());
+    currentCard = deck.pop();
+    renderCard('current-card','cc-corner','cc-value','cc-suit','cc-corner-br', currentCard);
+  }
+
+  function resetNextCard() {
+    const nc = document.getElementById('next-card');
+    nc.className = 'card hidden';
+    ['nc-value','nc-suit','nc-corner','nc-corner-br'].forEach(id =>
+      document.getElementById(id).textContent = ''
+    );
+  }
+
+  function renderCard(cId,crn,val,sut,crnBr, card) {
+    const el = document.getElementById(cId);
+    el.className = 'card ' + (RED_SUITS.includes(card.suit) ? 'red-suit' : 'black-suit');
+    document.getElementById(val).textContent = card.val;
+    document.getElementById(sut).textContent = card.suit;
+    document.getElementById(crn).textContent   = card.val+'\n'+card.suit;
+    document.getElementById(crnBr).textContent = card.val+'\n'+card.suit;
+  }
+
+  function setButtonsEnabled(on) {
+    document.querySelectorAll('.btn-up,.btn-down').forEach(b => b.disabled = !on);
+  }
+
+  function getRiggedCard(num, dir) {
+    let pool;
+    if (dir === 'up') {
+      pool = buildDeck().filter(c => c.num <= num);
+      if (!pool.length) pool = buildDeck().filter(c => c.num === num);
+    } else {
+      pool = buildDeck().filter(c => c.num >= num);
+      if (!pool.length) pool = buildDeck().filter(c => c.num === num);
+    }
+    const f = pool.filter(c => !(c.val===currentCard.val && c.suit===currentCard.suit));
+    return pickRandom(f.length ? f : pool);
+  }
+
+  function guess(dir) {
+    if (guessing) return;
+    guessing = true;
+    setButtonsEnabled(false);
+
+    const rigged = getRiggedCard(currentCard.num, dir);
+    const nc = document.getElementById('next-card');
+    nc.classList.add('flip-reveal');
+
+    setTimeout(() => {
+      renderCard('next-card','nc-corner','nc-value','nc-suit','nc-corner-br', rigged);
+    }, 250);
+
+    setTimeout(() => {
+      nc.classList.remove('flip-reveal');
+      const won = (dir==='up' && rigged.num>currentCard.num) || (dir==='down' && rigged.num<currentCard.num);
+      const tie  = rigged.num === currentCard.num;
+
+      if (won) {
+        nc.classList.add('win-glow');
+        showResult('win','🎉 RIKTIG!','Skjer det noe rart her...?');
+        score += 100;
+        updateScoreboard();
+        round++;
+        if (round > MAX_ROUNDS) setTimeout(gameOver, 1500);
+        else setTimeout(resetState, 1800);
+      } else {
+        nc.classList.add('lose-glow');
+        spawnBurst();
+        const msg = tie
+          ? `Likt! ${rigged.val}${rigged.suit} = ${currentCard.val}${currentCard.suit} — uavgjort er tap!`
+          : dir==='up'
+            ? `${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
+            : `${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
+        showResult('lose','✗ GALT!', msg);
+        round++;
+        updateScoreboard();
+        if (round > MAX_ROUNDS) setTimeout(gameOver, 1500);
+        else setTimeout(resetState, 1800);
+      }
+    }, 600);
+  }
+
+  function resetState() {
+    guessing = false;
+    resetNextCard();
+    document.getElementById('result-msg').textContent = '';
+    document.getElementById('result-msg').className = 'result-msg';
+    document.getElementById('streak-msg').textContent = 'Gjett om neste kort er høyere eller lavere!';
+    dealCurrent();
+    setButtonsEnabled(true);
+  }
+
+  function showResult(type, h, sub) {
+    const el = document.getElementById('result-msg');
+    el.className = 'result-msg ' + type;
+    el.textContent = h;
+    document.getElementById('streak-msg').textContent = sub;
+  }
+
+  const LOSS_MSGS = [
+    'Du har nettopp tapt buksa di på kortspill.',
+    'Gratulerer — du tapte selvtilliten din.',
+    'Du tapte helgen. Den kommer ikke tilbake.',
+    'Du har offisielt tapt gnisten din.',
+    'Du tapte retten til å kalle deg kortspiller.',
+    'Du tapte tilliten til dine egne instinkter.',
+    'Du tapte hatten din. Og verdigheten.',
+    'Du tapte troen på tilfeldigheter.',
+    'Du tapte favorittgenseren din. Symbolsk.',
+    'Du tapte fremtiden din. Litt dramatisk, men rettferdig.',
+    'Du tapte 12 sjanser og tok dem alle feil.',
+    'Du tapte retten til å si at du er heldig.',
+  ];
+
+  function gameOver() {
+    document.getElementById('guess-buttons').style.display = 'none';
+    const el = document.getElementById('result-msg');
+    el.className = 'result-msg gameover';
+    el.textContent = '💀 GAME OVER';
+    document.getElementById('streak-msg').textContent = pickRandom(LOSS_MSGS);
+    document.getElementById('restart-btn').style.display = 'inline-block';
+    spawnBurst(true);
+  }
+
+  function spawnBurst(big=false) {
+    const colors=['#e84d4d','#ff8800','#ffcc00','#e84d4d','#cc0000'];
+    const n = big ? 24 : 12;
+    const cx = window.innerWidth/2, cy = window.innerHeight/2;
+    for (let i=0;i<n;i++) {
+      const el = document.createElement('div');
+      el.className = 'burst';
+      const a = (i/n)*Math.PI*2, d=60+Math.random()*120;
+      Object.assign(el.style, {
+        left: cx+'px', top: cy+'px',
+        background: pickRandom(colors),
+        width: (big?10:7)+'px', height: (big?10:7)+'px',
+      });
+      el.style.setProperty('--tx', Math.cos(a)*d+'px');
+      el.style.setProperty('--ty', Math.sin(a)*d+'px');
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 900);
+    }
+  }
+</script>
+</body>
+</html>
