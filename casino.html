@@ -432,29 +432,94 @@
 
 <script>
 let audioCtx = null;
+
 function getCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
-function playTone(freq, type, duration, volume, delay = 0) {
-  const ctx = getCtx();
+
+function note(freq, type, vol, startT, dur, freqEnd) {
+  const ctx  = getCtx();
   const osc  = ctx.createOscillator();
   const gain = ctx.createGain();
-  osc.connect(gain);
-  gain.connect(ctx.destination);
+  osc.connect(gain); gain.connect(ctx.destination);
   osc.type = type;
-  osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-  gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-  gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + delay + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
-  osc.start(ctx.currentTime + delay);
-  osc.stop(ctx.currentTime + delay + duration + 0.05);
+  osc.frequency.setValueAtTime(freq, startT);
+  if (freqEnd !== undefined)
+    osc.frequency.exponentialRampToValueAtTime(freqEnd, startT + dur * 0.88);
+  gain.gain.setValueAtTime(0.001, startT);
+  gain.gain.linearRampToValueAtTime(vol, startT + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001, startT + dur);
+  osc.start(startT); osc.stop(startT + dur + 0.05);
 }
-function soundUp()       { playTone(330,'sine',0.12,0.3,0); playTone(440,'sine',0.15,0.35,0.10); playTone(550,'sine',0.18,0.3,0.20); }
-function soundDown()     { playTone(550,'sine',0.12,0.3,0); playTone(440,'sine',0.15,0.35,0.10); playTone(330,'sine',0.18,0.3,0.20); }
-function soundLose()     { playTone(300,'sawtooth',0.18,0.25,0); playTone(220,'sawtooth',0.18,0.25,0.18); playTone(160,'sawtooth',0.22,0.2,0.36); }
-function soundWin()      { playTone(523,'sine',0.15,0.3,0); playTone(659,'sine',0.15,0.3,0.10); playTone(784,'sine',0.2,0.3,0.20); }
-function soundGameOver() { playTone(220,'sawtooth',0.3,0.3,0); playTone(180,'sawtooth',0.3,0.3,0.25); playTone(140,'sawtooth',0.35,0.3,0.5); playTone(100,'sawtooth',0.5,0.25,0.75); }
+
+// ▲ HØYERE — lys stigende casino-chime
+function soundUp() {
+  const t = getCtx().currentTime;
+  note(523,  'triangle', 0.30, t,       0.10);
+  note(659,  'triangle', 0.35, t+0.10,  0.10);
+  note(784,  'triangle', 0.40, t+0.20,  0.12);
+  note(1047, 'triangle', 0.28, t+0.31,  0.20);
+  note(1046, 'sine',     0.08, t+0.31,  0.28);
+}
+
+// ▼ LAVERE — mørk synkende thud
+function soundDown() {
+  const t = getCtx().currentTime;
+  note(349, 'square',   0.20, t,       0.10);
+  note(277, 'square',   0.23, t+0.11,  0.10);
+  note(220, 'square',   0.26, t+0.22,  0.13);
+  note(185, 'sawtooth', 0.22, t+0.34,  0.22);
+  note(92,  'sine',     0.14, t+0.34,  0.32);
+}
+
+// ✗ GALT — sad trombone "wah wah wah WAAAAH"
+function soundLose() {
+  const t = getCtx().currentTime;
+  function brass(freq, startT, dur, freqEnd) {
+    const ctx  = getCtx();
+    [0, 14].forEach(detune => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sawtooth';
+      osc.detune.setValueAtTime(detune, startT);
+      osc.frequency.setValueAtTime(freq, startT);
+      if (freqEnd !== undefined)
+        osc.frequency.exponentialRampToValueAtTime(freqEnd, startT + dur * 0.85);
+      gain.gain.setValueAtTime(0.001, startT);
+      gain.gain.linearRampToValueAtTime(0.22, startT + 0.04);
+      gain.gain.linearRampToValueAtTime(0.14, startT + dur * 0.55);
+      gain.gain.exponentialRampToValueAtTime(0.001, startT + dur);
+      osc.start(startT); osc.stop(startT + dur + 0.05);
+    });
+  }
+  brass(293.7, t,        0.22);
+  brass(261.6, t + 0.23, 0.22);
+  brass(233.1, t + 0.46, 0.22);
+  brass(174.6, t + 0.69, 0.75, 146);
+}
+
+// 🎉 WIN
+function soundWin() {
+  const t = getCtx().currentTime;
+  [523, 659, 784, 1047].forEach((f, i) =>
+    note(f, 'triangle', 0.35, t + i * 0.09, 0.20)
+  );
+}
+
+// 💀 GAME OVER — tre tunge doom-akkorder
+function soundGameOver() {
+  const t = getCtx().currentTime;
+  function chord(freqs, startT, dur) {
+    freqs.forEach(f => note(f, 'sawtooth', 0.20, startT, dur));
+  }
+  chord([110, 138, 165], t,        0.38);
+  chord([98,  123, 147], t + 0.43, 0.38);
+  chord([87,  110, 131], t + 0.86, 0.42);
+  chord([65,   82,  98], t + 1.32, 0.75);
+}
 
 const bgMusic = document.getElementById('bg-music');
 bgMusic.volume = 0.55;
