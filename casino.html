@@ -509,10 +509,7 @@ function restartMusic() {
   musicStarted = true;
 }
 
-// Start music on first user gesture only — never on page load (autoplay is blocked/unwanted)
-['click','touchstart'].forEach(evt =>
-  document.addEventListener(evt, startMusic, { once: true, passive: true })
-);
+// Music is started explicitly from startIntro() on button press — no global auto-listeners needed.
 
 // ── Sound effects: completely separate AudioContext ──────────────
 // sfxCtx is created ONCE inside startIntro() (the first user gesture).
@@ -711,8 +708,7 @@ function stopMusic() {
 }
 
 function startIntro() {
-  // Music was already started by the global click/touchstart listener above.
-  // Do NOT call restartMusic() here — that would cause a jarring restart-then-cut.
+  startMusic();   // called from button onclick = valid user gesture → play() allowed
   initSfx();      // create sfxCtx ONCE — only here, never again
 
   document.getElementById('intro').classList.add('exit');
@@ -761,6 +757,7 @@ function pickRandom(a) { return a[Math.floor(Math.random()*a.length)]; }
 let deck, currentCard, score, round, guessing;
 
 function startGame() {
+  stopMusic();   // stopp evt. game-over-musikk når spillet starter på nytt
   buildPrizePanel();
   deck=shuffle(buildDeck()); score=0; round=1; guessing=false;
   document.getElementById('restart-btn').style.display = 'none';
@@ -806,11 +803,12 @@ function getRiggedCard(num, dir) {
   let pool = dir==='up'
     ? buildDeck().filter(c => c.num < num)
     : buildDeck().filter(c => c.num > num);
-  // Edge-case fallback: current card is the extreme end of the deck (2 guessing up, Q guessing down).
-  // Pick any card that is at least not the same value. Player may rarely win — unavoidable.
-  if (!pool.length) pool = buildDeck().filter(c => c.num !== num);
-  if (!pool.length) pool = buildDeck(); // absolute last resort
-  return pickRandom(pool);
+  // Edge-case: current card is the extreme end (2 guessing up, Q guessing down) — no worse card exists.
+  // forced=true tells guess() to count this round as a loss regardless of which card appears.
+  const forced = !pool.length;
+  if (forced) pool = buildDeck().filter(c => c.num !== num);
+  if (!pool.length) pool = buildDeck();
+  return { card: pickRandom(pool), forced };
 }
 
 function guess(dir) {
@@ -819,16 +817,17 @@ function guess(dir) {
   showArrow(dir); showFlash(dir);
   if (dir==='up') soundUp(); else soundDown();
 
-  const rigged=getRiggedCard(currentCard.num,dir);
+  const {card: rigged, forced}=getRiggedCard(currentCard.num,dir);
   const nc=document.getElementById('next-card');
   nc.classList.add('flip-reveal');
   setTimeout(()=>renderCard('next-card','nc-corner','nc-value','nc-suit','nc-corner-br',rigged),250);
 
   setTimeout(()=>{
     nc.classList.remove('flip-reveal');
-    // Strictly better = win. Same value or worse = loss (tie counts as loss).
-    const won=(dir==='up'&&rigged.num>currentCard.num)||(dir==='down'&&rigged.num<currentCard.num);
-    const tie=rigged.num===currentCard.num;
+    // forced=true means we hit an unriggable edge case — always count as loss.
+    // Otherwise: strictly better = win. Same value or worse = loss.
+    const won=!forced&&((dir==='up'&&rigged.num>currentCard.num)||(dir==='down'&&rigged.num<currentCard.num));
+    const tie=!forced&&rigged.num===currentCard.num;
 
     if (won) {
       nc.classList.add('win-glow'); soundWin();
