@@ -509,8 +509,7 @@ function restartMusic() {
   musicStarted = true;
 }
 
-// Try autoplay on page load; also on first tap (covers autoplay-blocked browsers)
-window.addEventListener('load', () => startMusic());
+// Start music on first user gesture only — never on page load (autoplay is blocked/unwanted)
 ['click','touchstart'].forEach(evt =>
   document.addEventListener(evt, startMusic, { once: true, passive: true })
 );
@@ -712,7 +711,8 @@ function stopMusic() {
 }
 
 function startIntro() {
-  restartMusic(); // start musikken fra begynnelsen når knappen trykkes
+  // Music was already started by the global click/touchstart listener above.
+  // Do NOT call restartMusic() here — that would cause a jarring restart-then-cut.
   initSfx();      // create sfxCtx ONCE — only here, never again
 
   document.getElementById('intro').classList.add('exit');
@@ -800,13 +800,16 @@ function setButtonsEnabled(on) {
 }
 
 function getRiggedCard(num, dir) {
-  // Pool always includes same-value cards so it is NEVER empty (handles 2-low and Q-high).
-  // Same value = tie = loss for the player, so this is safe.
-  // "up" guess: need rigged <= current (lower or equal → player wanted higher → loses).
-  // "down" guess: need rigged >= current (higher or equal → player wanted lower → loses).
-  const pool = dir==='up'
-    ? buildDeck().filter(c=>c.num<=num)
-    : buildDeck().filter(c=>c.num>=num);
+  // Same card must NEVER appear (original rules: equal = player wins).
+  // "up" guess → rig a strictly LOWER card (player wanted higher → loses).
+  // "down" guess → rig a strictly HIGHER card (player wanted lower → loses).
+  let pool = dir==='up'
+    ? buildDeck().filter(c => c.num < num)
+    : buildDeck().filter(c => c.num > num);
+  // Edge-case fallback: current card is the extreme end of the deck (2 guessing up, Q guessing down).
+  // Pick any card that is at least not the same value. Player may rarely win — unavoidable.
+  if (!pool.length) pool = buildDeck().filter(c => c.num !== num);
+  if (!pool.length) pool = buildDeck(); // absolute last resort
   return pickRandom(pool);
 }
 
