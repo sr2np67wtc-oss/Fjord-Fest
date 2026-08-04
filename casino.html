@@ -712,7 +712,7 @@ function stopMusic() {
 }
 
 function startIntro() {
-  startMusic();   // play music if autoplay was blocked
+  restartMusic(); // start musikken fra begynnelsen når knappen trykkes
   initSfx();      // create sfxCtx ONCE — only here, never again
 
   document.getElementById('intro').classList.add('exit');
@@ -775,7 +775,7 @@ function startGame() {
 
 function updateScoreboard() {
   document.getElementById('score').textContent = score;
-  document.getElementById('round').textContent = round + ' / ' + MAX_ROUNDS;
+  document.getElementById('round').textContent = Math.min(round, MAX_ROUNDS) + ' / ' + MAX_ROUNDS;
 }
 function dealCurrent() {
   if (!deck.length) deck=shuffle(buildDeck());
@@ -800,14 +800,13 @@ function setButtonsEnabled(on) {
 }
 
 function getRiggedCard(num, dir) {
-  // Same value now counts as a WIN, so rigged card must be strictly worse.
-  // "up" guess: need rigged < current. "down" guess: need rigged > current.
-  let pool = dir==='up'
-    ? buildDeck().filter(c=>c.num<num)
-    : buildDeck().filter(c=>c.num>num);
-  // Fallback if no strictly-worse card exists (e.g. player has Ace and says down)
-  if (!pool.length) pool=buildDeck().filter(c=>c.num!==num);
-  if (!pool.length) pool=buildDeck();
+  // Pool always includes same-value cards so it is NEVER empty (handles 2-low and Q-high).
+  // Same value = tie = loss for the player, so this is safe.
+  // "up" guess: need rigged <= current (lower or equal → player wanted higher → loses).
+  // "down" guess: need rigged >= current (higher or equal → player wanted lower → loses).
+  const pool = dir==='up'
+    ? buildDeck().filter(c=>c.num<=num)
+    : buildDeck().filter(c=>c.num>=num);
   return pickRandom(pool);
 }
 
@@ -824,27 +823,32 @@ function guess(dir) {
 
   setTimeout(()=>{
     nc.classList.remove('flip-reveal');
-    // Same value = win (equal card beats the guess requirement to be strictly higher/lower)
-    const won=(dir==='up'&&rigged.num>=currentCard.num)||(dir==='down'&&rigged.num<=currentCard.num);
+    // Strictly better = win. Same value or worse = loss (tie counts as loss).
+    const won=(dir==='up'&&rigged.num>currentCard.num)||(dir==='down'&&rigged.num<currentCard.num);
+    const tie=rigged.num===currentCard.num;
 
     if (won) {
       nc.classList.add('win-glow'); soundWin();
       showResult('win','🎉 RIKTIG!','Skjer det noe rart her...?');
       eliminatePrize(round);
-      score+=100; round++; updateScoreboard();
+      score+=100; round++;
       highlightPrize(round);
+      updateScoreboard();
       if (round>MAX_ROUNDS) setTimeout(gameOver,1500);
       else setTimeout(resetState,1800);
     } else {
       nc.classList.add('lose-glow'); soundLose(); spawnBurst();
-      const msg=dir==='up'
+      const msg=tie
+        ?`Likt! ${rigged.val}${rigged.suit} = ${currentCard.val}${currentCard.suit} — uavgjort er tap!`
+        :dir==='up'
           ?`${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
           :`${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
       showResult('lose','✗ GALT!',msg);
-      eliminatePrize(round);   // cross out the prize for this round
-      round++; updateScoreboard();
+      eliminatePrize(round);
+      round++;
       if (round>MAX_ROUNDS) setTimeout(gameOver,1100);
       else {
+        updateScoreboard();
         setTimeout(()=>{ highlightPrize(round); resetState(); }, 1800);
         return;
       }
