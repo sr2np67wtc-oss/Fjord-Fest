@@ -188,62 +188,62 @@
 
     /* ── PRIZE PANEL ── */
     .prize-panel {
-      flex: 0 0 200px;
-      display: flex; flex-direction: column; gap: 4px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px; padding: 14px 12px;
+      flex: 0 0 220px;
+      display: flex; flex-direction: column; gap: 3px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 14px 10px;
     }
     .prize-panel-title {
-      font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem;
-      letter-spacing: 0.15em; color: #555; text-align: center;
-      padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 4px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+      letter-spacing: 0.2em; color: #666; text-align: center;
+      padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 6px;
     }
     .prize-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 6px 8px; border-radius: 7px;
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 10px; border-radius: 8px;
       border: 1px solid transparent;
-      transition: all 0.4s ease; cursor: default;
+      transition: all 0.35s ease; cursor: default;
     }
-    .prize-item .prize-emoji { font-size: 1.3rem; flex: 0 0 auto; line-height: 1; }
+    .prize-item .prize-emoji { font-size: 1.4rem; flex: 0 0 auto; line-height: 1; }
     .prize-item .prize-info  { min-width: 0; }
     .prize-item .prize-name  {
-      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem;
-      letter-spacing: 0.05em; color: #aaa; line-height: 1.1;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+      letter-spacing: 0.06em; color: #777; line-height: 1.1;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .prize-item .prize-sub   {
-      font-size: 0.6rem; color: #444; letter-spacing: 0.04em;
+      font-size: 0.62rem; color: #3a3a3a; letter-spacing: 0.03em;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    /* active = prize at stake this round */
+    /* active = premie på spill denne runden */
     .prize-item.active {
-      background: rgba(212,32,32,0.12);
-      border-color: rgba(212,32,32,0.35);
-      box-shadow: 0 0 10px rgba(212,32,32,0.15);
+      background: rgba(212,32,32,0.16);
+      border-color: rgba(212,32,32,0.5);
+      box-shadow: 0 0 16px rgba(212,32,32,0.25), inset 0 0 8px rgba(212,32,32,0.08);
     }
-    .prize-item.active .prize-name { color: #fff; }
-    .prize-item.active .prize-sub  { color: #888; }
+    .prize-item.active .prize-name { color: #fff; font-size: 1.05rem; }
+    .prize-item.active .prize-sub  { color: #999; }
+    .prize-item.active .prize-emoji { font-size: 1.6rem; }
     .prize-item.active::before {
-      content: '▶'; font-size: 0.55rem; color: var(--red);
-      flex: 0 0 auto; line-height: 1; margin-right: -2px;
+      content: '▶'; font-size: 0.6rem; color: var(--red);
+      flex: 0 0 auto; line-height: 1; margin-right: -3px;
     }
-    /* eliminated = lost this prize */
+    /* eliminated = krysset ut */
     .prize-item.eliminated {
-      opacity: 0.22; filter: grayscale(1);
+      opacity: 0.18; filter: grayscale(1);
     }
     .prize-item.eliminated .prize-name {
       text-decoration: line-through; text-decoration-color: #e84d4d;
     }
-    /* eliminated with animation */
     .prize-item.just-eliminated {
       animation: eliminatePrize 0.6s ease forwards;
     }
     @keyframes eliminatePrize {
-      0%  { background: rgba(212,32,32,0.25); border-color: rgba(212,32,32,0.6); opacity: 1; }
+      0%  { background: rgba(212,32,32,0.3); border-color: rgba(212,32,32,0.7); opacity: 1; }
       50% { background: rgba(212,32,32,0.1); }
-      100%{ opacity: 0.22; filter: grayscale(1); }
+      100%{ opacity: 0.18; filter: grayscale(1); }
     }
 
     /* ── GAME CONTAINER ── */
@@ -607,16 +607,16 @@ function soundGameOver() {
    Round N → prize at index (MAX_ROUNDS - N)
 ═══════════════════════════════════════════════════════════════════ */
 const PRIZES = [
-  { emoji:'🏠', name:'Huset',         sub:'Verdi: 5 000 000 kr' },
-  { emoji:'🚗', name:'Bilen',         sub:'Tesla Model S' },
-  { emoji:'🛥️', name:'Båtturen',      sub:'Luksuskryss i Karibia' },
-  { emoji:'✈️', name:'Flyturen',      sub:'Tur/retur New York' },
-  { emoji:'📺', name:'TV-en',         sub:'85" 8K OLED' },
-  { emoji:'💻', name:'Laptopen',      sub:'MacBook Pro M3' },
-  { emoji:'📱', name:'iPhone',        sub:'16 Pro Max' },
-  { emoji:'🎸', name:'Gitaren',       sub:'Gibson Les Paul' },
-  { emoji:'🍕', name:'Middagen',      sub:'For 4 på Maaemo' },
-  { emoji:'🧢', name:'Lua',           sub:'Simonsen-merket lue' },
+  { emoji:'🏠', name:'Hus',       sub:'Verdi: 5 000 000 kr' },
+  { emoji:'🚗', name:'Bil',       sub:'Tesla Model S' },
+  { emoji:'🛥️', name:'Båttur',    sub:'Luksuskryss i Karibia' },
+  { emoji:'✈️', name:'Flytur',    sub:'Tur/retur New York' },
+  { emoji:'📺', name:'TV',        sub:'85" 8K OLED' },
+  { emoji:'💻', name:'Laptop',    sub:'MacBook Pro M3' },
+  { emoji:'📱', name:'iPhone',    sub:'16 Pro Max' },
+  { emoji:'🎸', name:'Gitar',     sub:'Gibson Les Paul' },
+  { emoji:'🍕', name:'Middag',    sub:'For 4 på Maaemo' },
+  { emoji:'🧢', name:'Lue',       sub:'Simonsen-merket lue' },
 ];
 
 function buildPrizePanel() {
