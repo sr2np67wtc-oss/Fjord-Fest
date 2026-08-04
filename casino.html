@@ -893,7 +893,7 @@ function gameOver() {
   setTimeout(()=>restartMusic(), 1400);
   document.getElementById('result-msg').className='result-msg gameover';
   document.getElementById('result-msg').textContent='💀 GAME OVER';
-  document.getElementById('streak-msg').textContent=pickRandom(LOSS_MSGS);
+  document.getElementById('streak-msg').textContent='';
   document.getElementById('restart-btn').style.display='inline-block';
   spawnBurst(true);
 }
