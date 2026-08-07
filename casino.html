@@ -39,7 +39,7 @@
     }
     /* Logo i det svarte feltet nederst */
     #subtitle-mask {
-      display: flex; align-items: center; padding-left: 24px;
+      display: flex; align-items: center; justify-content: center;
     }
     #video-logo {
       display: flex; align-items: center; gap: 10px;
@@ -236,7 +236,6 @@
     <div class="intro-sender">Et spill fra <span>Simonsen Fjord &amp; Fest</span></div>
   </div>
   <button id="start-btn" onclick="goToGame()">▶ START SPILLET</button>
-  <div class="click-hint">Trykk hvor som helst for å starte musikken</div>
 </div>
 
 <!-- YouTube IFrame API -->
@@ -245,7 +244,8 @@
 /* ── YouTube-video ── */
 var ytPlayer;
 var cutoffTimer = null;
-var videoCut = 14; // sekunder før slutten
+var videoCut = 0; // brukes ikke lenger — fast kutt ved 34 sek
+var cutAtSeconds = 34; // kutt videoen etter 34 sekunder
 
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player('yt-player', {
@@ -285,10 +285,8 @@ function startVideo() {
 function onPlayerStateChange(event) {
   // YT.PlayerState.PLAYING = 1
   if (event.data === YT.PlayerState.PLAYING && !cutoffTimer) {
-    var duration = ytPlayer.getDuration();
     var currentTime = ytPlayer.getCurrentTime();
-    var remaining = duration - currentTime;
-    var cutAt = Math.max(0, (remaining - videoCut) * 1000);
+    var cutAt = Math.max(0, (cutAtSeconds - currentTime) * 1000);
     cutoffTimer = setTimeout(transitionToCasino, cutAt);
   }
   // Hvis videoen uventet slutter, overfør likevel
