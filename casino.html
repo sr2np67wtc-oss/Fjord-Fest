@@ -37,6 +37,24 @@
       height: 16%; background: #000;
       pointer-events: none; z-index: 5;
     }
+    /* Logo i det svarte feltet nederst */
+    #subtitle-mask {
+      display: flex; align-items: center; padding-left: 24px;
+    }
+    #video-logo {
+      display: flex; align-items: center; gap: 10px;
+      pointer-events: none;
+    }
+    #video-logo .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    #video-logo .logo-name {
+      font-family: 'Inter', sans-serif; font-weight: 800;
+      font-size: 0.95rem; letter-spacing: 0.06em; color: #fff;
+    }
+    #video-logo .logo-sub {
+      font-family: 'Inter', sans-serif; font-weight: 600;
+      font-size: 0.6rem; letter-spacing: 0.22em;
+      color: #d42020; margin-top: 3px;
+    }
 
     /* Klikk-for-å-starte-skjerm */
     #tap-screen {
@@ -182,8 +200,20 @@
     <!-- YT IFrame API fyller inn her -->
     <div id="yt-player"></div>
   </div>
-  <!-- Svart maske som dekker teksting nederst -->
-  <div id="subtitle-mask"></div>
+  <!-- Svart maske som dekker teksting nederst, med logo -->
+  <div id="subtitle-mask">
+    <div id="video-logo">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+        <path d="M50 15L90 80H10L50 15Z" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M30 80L40 60L50 80H30Z" fill="white"/>
+        <path d="M70 80L60 60L50 80H70Z" fill="white"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-name">SIMONSEN</span>
+        <span class="logo-sub">FJORD &amp; FEST</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Klikk-for-å-starte (skjules etter start) -->
   <div id="tap-screen" onclick="startVideo()">
