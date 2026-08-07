@@ -494,14 +494,22 @@ function spawnBurst(big=false) {
 /* ═══════════════════════════════════════════════════════════════════
    GAME LOGIC
 ═══════════════════════════════════════════════════════════════════ */
+// Kort som KAN vises som nåværende kort (aldri A eller K)
 const VALUES=['2','3','4','5','6','7','8','9','10','J','Q'];
-const NUMERIC={2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12};
+// Fullt deck inkl. A(1) og K(13) — brukes kun for rigging
+const FULL_VALUES=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const NUMERIC={A:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12,K:13};
 const SUITS=['♠','♥','♦','♣'];
 const RED_SUITS=['♥','♦'];
 
 function buildDeck() {
   const d=[];
   for (const s of SUITS) for (const v of VALUES) d.push({val:v,suit:s,num:NUMERIC[v]});
+  return d;
+}
+function buildFullDeck() {
+  const d=[];
+  for (const s of SUITS) for (const v of FULL_VALUES) d.push({val:v,suit:s,num:NUMERIC[v]});
   return d;
 }
 function shuffle(a) {
@@ -550,13 +558,11 @@ function setButtonsEnabled(on) {
 }
 
 function getRiggedCard(num, dir) {
-  let pool = dir==='up'
-    ? buildDeck().filter(c=>c.num<num)
-    : buildDeck().filter(c=>c.num>num);
-  const forced=!pool.length;
-  if (forced) pool=buildDeck().filter(c=>c.num!==num);
-  if (!pool.length) pool=buildDeck();
-  return {card:pickRandom(pool), forced};
+  // Bruker fullt deck (A=1 … K=13) — alltid et strengt verre kort tilgjengelig
+  const pool = dir==='up'
+    ? buildFullDeck().filter(c=>c.num<num)   // lavere → taper når de gjetter høyere
+    : buildFullDeck().filter(c=>c.num>num);  // høyere → taper når de gjetter lavere
+  return pickRandom(pool);
 }
 
 function guess(dir) {
@@ -565,35 +571,22 @@ function guess(dir) {
   showArrow(dir); showFlash(dir);
   if (dir==='up') soundUp(); else soundDown();
 
-  const {card:rigged, forced}=getRiggedCard(currentCard.num, dir);
+  const rigged=getRiggedCard(currentCard.num, dir);
   const nc=document.getElementById('next-card');
   nc.classList.add('flip-reveal');
   setTimeout(()=>renderCard('next-card','nc-corner','nc-value','nc-suit','nc-corner-br',rigged),250);
 
   setTimeout(()=>{
     nc.classList.remove('flip-reveal');
-    const won=!forced&&((dir==='up'&&rigged.num>currentCard.num)||(dir==='down'&&rigged.num<currentCard.num));
-    const tie=!forced&&rigged.num===currentCard.num;
-
-    if (won) {
-      nc.classList.add('win-glow'); soundWin();
-      showResult('win','🎉 RIKTIG!','Skjer det noe rart her...?');
-      eliminatePrize(round); score+=100; round++;
-      highlightPrize(round); updateScoreboard();
-      if (round>MAX_ROUNDS) setTimeout(gameOver,1500);
-      else setTimeout(resetState,1800);
-    } else {
-      nc.classList.add('lose-glow'); soundLose(); spawnBurst();
-      const msg=tie
-        ?`Likt! ${rigged.val}${rigged.suit} = ${currentCard.val}${currentCard.suit} — uavgjort er tap!`
-        :dir==='up'
-          ?`${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
-          :`${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
-      showResult('lose','✗ GALT!',msg);
-      eliminatePrize(round); round++;
-      if (round>MAX_ROUNDS) setTimeout(gameOver,1100);
-      else { updateScoreboard(); setTimeout(()=>{highlightPrize(round);resetState();},1800); return; }
-    }
+    // Rigged kort er alltid strengt verre — spiller taper alltid
+    const msg=dir==='up'
+      ?`${rigged.val}${rigged.suit} er lavere enn ${currentCard.val}${currentCard.suit} — FEIL!`
+      :`${rigged.val}${rigged.suit} er høyere enn ${currentCard.val}${currentCard.suit} — FEIL!`;
+    nc.classList.add('lose-glow'); soundLose(); spawnBurst();
+    showResult('lose','✗ GALT!',msg);
+    eliminatePrize(round); round++;
+    if (round>MAX_ROUNDS) setTimeout(gameOver,1100);
+    else { updateScoreboard(); setTimeout(()=>{highlightPrize(round);resetState();},1800); }
   },600);
 }
 
