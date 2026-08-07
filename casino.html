@@ -269,6 +269,7 @@ function transitionToCasino() {
   var page = document.getElementById('page');
   page.classList.add('visible');
 
+  videoFinished = true;
   tryPlayMusic();
 
   // Fjern overlay fra DOM etter fade er ferdig
@@ -284,13 +285,16 @@ bgMusic.loop = false;
 bgMusic.volume = 0.55;
 
 var musicStarted = false;
+var videoFinished = false; // musikk kan ikke starte før videoen er ferdig
+
 function tryPlayMusic() {
+  if (!videoFinished) return; // blokkert mens video kjører
   if (musicStarted) return;
   musicStarted = true;
   bgMusic.play().catch(function() { musicStarted = false; });
 }
 
-// Fallback: klikk/touch på casino-introen starter musikk
+// Fallback: klikk/touch på casino-introen starter musikk (bare etter video)
 document.addEventListener('click',      tryPlayMusic, { passive: true });
 document.addEventListener('touchstart', tryPlayMusic, { passive: true });
 
